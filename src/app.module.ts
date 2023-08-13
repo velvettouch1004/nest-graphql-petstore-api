@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { AppController } from './app.controller';
@@ -6,6 +6,7 @@ import { AppService } from './app.service';
 import { PetsModule } from './pets/pets.module';
 import { join } from 'path';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { OwnersModule } from './owners/owners.module';
 
 @Module({
   imports: [
@@ -15,11 +16,12 @@ import { TypeOrmModule } from '@nestjs/typeorm';
     }),
     TypeOrmModule.forRoot({
       type: 'sqlite',
-      database: ':memory',
+      database: 'db.sqlite',
       entities: ['dist/**/*.entity{.ts,.js}'],
       synchronize: true,
     }),
-    PetsModule,
+    forwardRef(() => PetsModule),
+    forwardRef(() => OwnersModule),
   ],
   controllers: [AppController],
   providers: [AppService],
